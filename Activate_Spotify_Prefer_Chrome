@@ -1,0 +1,44 @@
+set spotifyIsInChrome to false
+
+if isRunning("Google Chrome") then
+	tell application "Google Chrome"
+		repeat with w in windows
+			set i to 1
+			repeat with t in tabs of w
+				tell t
+					if URL of t contains "open.spotify.com" then
+						set active tab index of w to i
+						set index of w to 1
+						set spotifyIsInChrome to true
+						exit repeat
+					end if
+					set i to i + 1
+				end tell
+			end repeat
+		end repeat
+	end tell
+end if
+
+if spotifyIsInChrome is true then
+	--do nothing
+else
+	if isRunning("Spotify") then
+		tell application "System Events"
+			set activeApp to name of first application process whose frontmost is true
+			if "Spotify" is in activeApp then
+				--do nothing
+			else
+				tell application "Spotify" to activate
+			end if
+		end tell
+	else
+		tell application "Spotify"
+			activate
+		end tell
+	end if
+end if
+
+
+on isRunning(appName)
+	tell application "System Events" to (name of processes) contains appName
+end isRunning
